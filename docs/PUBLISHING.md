@@ -1,144 +1,144 @@
-# 发布到 PyPI 指南
+# Publishing to PyPI Guide
 
-本文档说明如何将 `llm-content-extractor` 包发布到 Python Package Index (PyPI)，以便其他用户可以通过 `pip install` 安装。
+This document explains how to publish the `llm-content-extractor` package to the Python Package Index (PyPI), making it installable via `pip install`.
 
-## 前置要求
+## Prerequisites
 
-1. **安装 Poetry**（如果尚未安装）：
+1. **Install Poetry** (if not already installed):
    ```bash
    curl -sSL https://install.python-poetry.org | python3 -
    ```
 
-2. **注册 PyPI 账号**：
-   - 访问 [https://pypi.org/account/register/](https://pypi.org/account/register/)
-   - 完成注册流程
-   - 启用双因素认证（2FA）以提高安全性
+2. **Register for a PyPI Account**:
+   - Visit [https://pypi.org/account/register/](https://pypi.org/account/register/)
+   - Complete the registration process
+   - Enable two-factor authentication (2FA) for enhanced security
 
-3. **创建 API Token**：
-   - 登录 PyPI 后，访问 [https://pypi.org/manage/account/](https://pypi.org/manage/account/)
-   - 滚动到 "API tokens" 部分
-   - 点击 "Add API token"
-   - 给 token 起个名字（如 "llm-content-extractor"）
-   - 复制生成的 token（以 `pypi-` 开头）
+3. **Create an API Token**:
+   - After logging into PyPI, visit [https://pypi.org/manage/account/](https://pypi.org/manage/account/)
+   - Scroll to the "API tokens" section
+   - Click "Add API token"
+   - Give the token a name (e.g., "llm-content-extractor")
+   - Copy the generated token (starts with `pypi-`)
 
-## 配置 Poetry 认证
+## Configure Poetry Authentication
 
-使用 API token 配置 Poetry：
+Configure Poetry with your API token:
 
 ```bash
 poetry config pypi-token.pypi pypi-AgEIcHlwaS5vcmcC...
 ```
 
-将上面的 token 替换为你自己的 API token。
+Replace the token above with your actual API token.
 
-## 发布流程
+## Publishing Workflow
 
-### 1. 更新版本号
+### 1. Update Version Number
 
-在发布新版本之前，更新 `pyproject.toml` 中的版本号：
+Before publishing a new version, update the version number in `pyproject.toml`:
 
 ```bash
-# 自动更新补丁版本号（0.1.0 -> 0.1.1）
+# Automatically update patch version (0.1.0 -> 0.1.1)
 poetry version patch
 
-# 或更新次版本号（0.1.0 -> 0.2.0）
+# Or update minor version (0.1.0 -> 0.2.0)
 poetry version minor
 
-# 或更新主版本号（0.1.0 -> 1.0.0）
+# Or update major version (0.1.0 -> 1.0.0)
 poetry version major
 
-# 或手动指定版本
+# Or manually specify a version
 poetry version 1.2.3
 ```
 
-### 2. 更新 CHANGELOG
+### 2. Update CHANGELOG
 
-在 `CHANGELOG.md` 中记录本次版本的变更：
+Record changes for this version in `CHANGELOG.md`:
 
 ```markdown
-## [0.1.1] - 2025-01-15
+## [0.1.1] - 2025-01-29
 
 ### Added
-- 新增 XXX 功能
+- New feature XXX
 
 ### Fixed
-- 修复 XXX 问题
+- Fixed issue XXX
 
 ### Changed
-- 改进 XXX 性能
+- Improved XXX performance
 ```
 
-### 3. 运行测试
+### 3. Run Tests
 
-确保所有测试通过：
+Ensure all tests pass:
 
 ```bash
 poetry install
 poetry run pytest
 ```
 
-### 4. 构建发布包
+### 4. Build the Distribution Package
 
 ```bash
 poetry build
 ```
 
-这将在 `dist/` 目录下创建两个文件：
-- `llm_content_extractor-0.1.0-py3-none-any.whl`（wheel 格式）
-- `llm_content_extractor-0.1.0.tar.gz`（源码包）
+This will create two files in the `dist/` directory:
+- `llm_content_extractor-0.1.0-py3-none-any.whl` (wheel format)
+- `llm_content_extractor-0.1.0.tar.gz` (source distribution)
 
-### 5. 发布到 TestPyPI（可选但推荐）
+### 5. Publish to TestPyPI (Optional but Recommended)
 
-在发布到正式 PyPI 之前，建议先发布到 TestPyPI 进行测试：
+Before publishing to the official PyPI, it's recommended to test on TestPyPI:
 
 ```bash
-# 配置 TestPyPI token
+# Configure TestPyPI token
 poetry config repositories.testpypi https://test.pypi.org/legacy/
 poetry config pypi-token.testpypi pypi-AgEIcHlwaS5vcmcC...
 
-# 发布到 TestPyPI
+# Publish to TestPyPI
 poetry publish -r testpypi
 ```
 
-测试安装：
+Test the installation:
 
 ```bash
 pip install --index-url https://test.pypi.org/simple/ llm-content-extractor
 ```
 
-### 6. 发布到 PyPI
+### 6. Publish to PyPI
 
-确认一切正常后，发布到正式 PyPI：
+After confirming everything works, publish to the official PyPI:
 
 ```bash
 poetry publish
 ```
 
-### 7. 验证发布
+### 7. Verify the Publication
 
-访问包的 PyPI 页面验证发布成功：
+Visit the package's PyPI page to verify successful publication:
 ```
 https://pypi.org/project/llm-content-extractor/
 ```
 
-测试安装：
+Test the installation:
 
 ```bash
 pip install llm-content-extractor
 ```
 
-### 8. 创建 Git Tag
+### 8. Create a Git Tag
 
-为新版本创建 git tag：
+Create a git tag for the new version:
 
 ```bash
 git tag -a v0.1.0 -m "Release version 0.1.0"
 git push origin v0.1.0
 ```
 
-## 自动化发布（GitHub Actions）
+## Automated Publishing (GitHub Actions)
 
-可以创建 GitHub Actions 工作流来自动化发布流程：
+You can create a GitHub Actions workflow to automate the publishing process:
 
 ```yaml
 # .github/workflows/publish.yml
@@ -171,52 +171,52 @@ jobs:
           poetry publish
 ```
 
-在 GitHub 仓库设置中添加 secret `PYPI_API_TOKEN`。
+Add the `PYPI_API_TOKEN` secret in your GitHub repository settings.
 
-## 常见问题
+## Common Issues
 
-### 问题：发布失败，提示 "File already exists"
+### Issue: Publication failed with "File already exists" error
 
-**解决方案**：PyPI 不允许重新上传相同版本的包。需要更新版本号后重新构建和发布。
+**Solution**: PyPI doesn't allow re-uploading the same version. You need to update the version number, rebuild, and publish again.
 
-### 问题：包名已被占用
+### Issue: Package name is already taken
 
-**解决方案**：在 PyPI 上搜索确认包名是否可用。如果已被占用，需要在 `pyproject.toml` 中修改包名。
+**Solution**: Search PyPI to confirm if the package name is available. If it's already taken, you'll need to change the package name in `pyproject.toml`.
 
-### 问题：依赖版本冲突
+### Issue: Dependency version conflicts
 
-**解决方案**：检查 `pyproject.toml` 中的依赖版本范围是否合理，确保与常见的 Python 环境兼容。
+**Solution**: Check that the dependency version ranges in `pyproject.toml` are reasonable and compatible with common Python environments.
 
-## 版本管理建议
+## Version Management Best Practices
 
-遵循 [语义化版本](https://semver.org/lang/zh-CN/)：
+Follow [Semantic Versioning](https://semver.org/):
 
-- **主版本号（Major）**：不兼容的 API 变更
-- **次版本号（Minor）**：向后兼容的功能新增
-- **修订号（Patch）**：向后兼容的问题修正
+- **Major version (X.0.0)**: Incompatible API changes
+- **Minor version (0.X.0)**: Backward-compatible feature additions
+- **Patch version (0.0.X)**: Backward-compatible bug fixes
 
-## 安全注意事项
+## Security Notes
 
-1. **永远不要**将 API token 提交到代码仓库
-2. 使用环境变量或 GitHub Secrets 存储敏感信息
-3. 定期轮换 API tokens
-4. 为不同项目使用不同的 tokens
-5. 启用 PyPI 的双因素认证
+1. **NEVER** commit API tokens to the code repository
+2. Use environment variables or GitHub Secrets to store sensitive information
+3. Rotate API tokens regularly
+4. Use different tokens for different projects
+5. Enable two-factor authentication on PyPI
 
-## 撤回已发布的版本
+## Revoking a Published Version
 
-如果发现严重问题，可以从 PyPI 移除版本：
+If you discover a critical issue, you can remove a version from PyPI:
 
-1. 登录 PyPI
-2. 进入项目管理页面
-3. 选择要删除的版本
-4. 点击 "Delete" 并确认
+1. Log into PyPI
+2. Go to the project management page
+3. Select the version to delete
+4. Click "Delete" and confirm
 
-**注意**：删除后，该版本号不能再次使用。
+**Note**: Once deleted, that version number cannot be reused.
 
-## 参考资源
+## Reference Resources
 
-- [Poetry 官方文档 - Publishing](https://python-poetry.org/docs/cli/#publish)
-- [PyPI 官方文档](https://pypi.org/help/)
-- [Python 打包用户指南](https://packaging.python.org/)
-- [语义化版本规范](https://semver.org/lang/zh-CN/)
+- [Poetry Documentation - Publishing](https://python-poetry.org/docs/cli/#publish)
+- [PyPI Official Documentation](https://pypi.org/help/)
+- [Python Packaging User Guide](https://packaging.python.org/)
+- [Semantic Versioning](https://semver.org/)
