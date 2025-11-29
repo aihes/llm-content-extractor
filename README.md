@@ -4,42 +4,42 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
-一个强大的 LLM 输出内容提取器，支持从 LLM 返回的原始字符串中提取和解析 JSON、XML、HTML 和代码块。
+A robust content extractor for LLM outputs with support for extracting and parsing JSON, XML, HTML, and code blocks from raw strings.
 
-## ✨ 特性
+## ✨ Features
 
-- 🎯 **多格式支持**：支持 JSON、XML、HTML 和代码块提取
-- 🛡️ **容错能力强**：
-  - 自动处理 Markdown 代码围栏（\`\`\`json ... \`\`\`）
-  - 智能提取嵌入在文本中的内容
-  - 修复常见的 LLM 错误（如 JSON 尾部逗号）
-- 🏗️ **设计模式**：基于策略模式，易于扩展
-- 📦 **简单易用**：函数式接口，开箱即用
-- 🧪 **充分测试**：高测试覆盖率，保证质量
-- 🔧 **类型安全**：完整的类型注解支持
+- 🎯 **Multiple Format Support**: Extract JSON, XML, HTML, and code blocks
+- 🛡️ **Fault Tolerant**:
+  - Automatically handle Markdown code fences (\`\`\`json ... \`\`\`)
+  - Intelligently extract content embedded in text
+  - Fix common LLM errors (e.g., trailing commas in JSON)
+- 🏗️ **Strategy Pattern**: Easy to extend with custom extractors
+- 📦 **Simple API**: Functional interface, ready to use
+- 🧪 **Well Tested**: High test coverage for reliability
+- 🔧 **Type Safe**: Full type annotations support
 
-## 📦 安装
+## 📦 Installation
 
-使用 pip 安装：
+Install with pip:
 
 ```bash
 pip install llm-content-extractor
 ```
 
-使用 Poetry 安装：
+Install with Poetry:
 
 ```bash
 poetry add llm-content-extractor
 ```
 
-## 🚀 快速开始
+## 🚀 Quick Start
 
-### 基本用法
+### Basic Usage
 
 ```python
 from llm_content_extractor import extract, ContentType
 
-# 提取 JSON
+# Extract JSON
 json_text = '''
 Here's the data you requested:
 ```json
@@ -55,32 +55,32 @@ result = extract(json_text, ContentType.JSON)
 print(result)  # {'name': 'Alice', 'age': 30, 'hobbies': ['reading', 'coding']}
 ```
 
-### JSON 提取示例
+### JSON Extraction Examples
 
 ```python
 from llm_content_extractor import extract, ContentType
 
-# 1. 带 Markdown 围栏的 JSON
+# 1. JSON with Markdown fence
 text1 = '```json\n{"status": "success"}\n```'
 extract(text1, ContentType.JSON)  # {'status': 'success'}
 
-# 2. 纯 JSON
+# 2. Plain JSON
 text2 = '{"status": "success"}'
 extract(text2, ContentType.JSON)  # {'status': 'success'}
 
-# 3. 嵌入在文本中的 JSON
+# 3. JSON embedded in text
 text3 = 'The result is: {"status": "success"} - done!'
 extract(text3, ContentType.JSON)  # {'status': 'success'}
 
-# 4. 带尾部逗号的 JSON（常见 LLM 错误）
+# 4. JSON with trailing commas (common LLM error)
 text4 = '{"items": [1, 2, 3,],}'
 extract(text4, ContentType.JSON)  # {'items': [1, 2, 3]}
 
-# 5. 使用字符串类型参数
-extract(text1, "json")  # 同样有效
+# 5. Using string content type
+extract(text1, "json")  # Also works
 ```
 
-### XML 提取示例
+### XML Extraction Examples
 
 ```python
 from llm_content_extractor import extract, ContentType
@@ -95,10 +95,10 @@ xml_text = '''
 '''
 
 result = extract(xml_text, ContentType.XML)
-print(result)  # 返回清洗后的 XML 字符串
+print(result)  # Returns cleaned XML string
 ```
 
-### HTML 提取示例
+### HTML Extraction Examples
 
 ```python
 from llm_content_extractor import extract, ContentType
@@ -113,15 +113,15 @@ html_text = '''
 '''
 
 result = extract(html_text, ContentType.HTML)
-print(result)  # 返回清洗后的 HTML 字符串
+print(result)  # Returns cleaned HTML string
 ```
 
-### 代码块提取示例
+### Code Block Extraction Examples
 
 ```python
 from llm_content_extractor import extract, ContentType
 
-# 提取特定语言的代码
+# Extract language-specific code
 python_code = '''
 ```python
 def greet(name):
@@ -133,13 +133,13 @@ print(greet("World"))
 
 code = extract(python_code, ContentType.CODE, language='python')
 print(code)
-# 输出：
+# Output:
 # def greet(name):
 #     return f"Hello, {name}!"
 #
 # print(greet("World"))
 
-# 提取任意代码块
+# Extract any code block
 generic_code = '''
 ```
 const x = 42;
@@ -151,14 +151,14 @@ code = extract(generic_code, ContentType.CODE)
 print(code)  # const x = 42;\nconsole.log(x);
 ```
 
-## 🎨 高级用法
+## 🎨 Advanced Usage
 
-### 使用策略类
+### Using Extractor Classes Directly
 
 ```python
 from llm_content_extractor import JSONExtractor, XMLExtractor
 
-# 直接使用提取器类
+# Use extractor classes directly
 json_extractor = JSONExtractor()
 result = json_extractor.extract('{"key": "value"}')
 
@@ -166,77 +166,78 @@ xml_extractor = XMLExtractor()
 result = xml_extractor.extract('<root><item>test</item></root>')
 ```
 
-### 自定义提取器
+### Custom Extractors
 
-通过继承 `ContentExtractor` 基类创建自定义提取器：
+Create custom extractors by inheriting from the `ContentExtractor` base class:
 
 ```python
 from llm_content_extractor.base import ContentExtractor
 from llm_content_extractor import extract, ContentType, register_extractor
+import json
 
 class CustomJSONExtractor(ContentExtractor):
     def extract(self, raw_text: str):
-        # 自定义提取逻辑
+        # Custom extraction logic
         cleaned = raw_text.strip()
-        # ... 你的逻辑
+        # ... your logic here
         return json.loads(cleaned)
 
-# 注册自定义提取器
+# Register custom extractor
 register_extractor(ContentType.JSON, CustomJSONExtractor)
 
-# 使用自定义提取器
+# Use the custom extractor
 result = extract(text, ContentType.JSON)
 ```
 
-### 使用自定义提取器实例
+### Using Custom Extractor Instances
 
 ```python
 from llm_content_extractor import extract, JSONExtractor
 
-# 创建自定义配置的提取器
-my_extractor = JSONExtractor()
+# Create a custom configured extractor
+my_extractor = JSONExtractor(strict=True)
 
-# 直接传入提取器实例
+# Pass the extractor instance directly
 result = extract(raw_text, ContentType.JSON, extractor=my_extractor)
 ```
 
-## 🧪 容错能力展示
+## 🧪 Fault Tolerance Features
 
-LLM Content Extractor 能够处理多种常见的 LLM 输出问题：
+LLM Content Extractor handles various common issues in LLM outputs:
 
-### 1. Markdown 代码围栏
+### 1. Markdown Code Fences
 
 ```python
-# ✅ 支持各种围栏格式
+# ✅ Supports various fence formats
 extract('```json\n{"a": 1}\n```', ContentType.JSON)
-extract('```JSON\n{"a": 1}\n```', ContentType.JSON)  # 大写
-extract('```\n{"a": 1}\n```', ContentType.JSON)      # 无语言标识
+extract('```JSON\n{"a": 1}\n```', ContentType.JSON)  # Uppercase
+extract('```\n{"a": 1}\n```', ContentType.JSON)      # No language identifier
 ```
 
-### 2. 嵌入式内容
+### 2. Embedded Content
 
 ```python
-# ✅ 从文本中提取内容
+# ✅ Extract content from surrounding text
 text = '''
 Here is the configuration:
 {"enabled": true, "timeout": 30}
 This will set the timeout to 30 seconds.
 '''
-extract(text, ContentType.JSON)  # 成功提取
+extract(text, ContentType.JSON)  # Successfully extracts
 ```
 
-### 3. JSON 语法错误修复
+### 3. JSON Syntax Error Fixing
 
 ```python
-# ✅ 自动修复尾部逗号
+# ✅ Automatically fix trailing commas
 extract('{"items": [1, 2,],}', ContentType.JSON)  # {'items': [1, 2]}
 extract('[{"id": 1,}, {"id": 2,}]', ContentType.JSON)  # [{'id': 1}, {'id': 2}]
 ```
 
-### 4. 嵌套结构
+### 4. Nested Structures
 
 ```python
-# ✅ 处理复杂嵌套
+# ✅ Handle complex nested structures
 nested = {
     "user": {
         "profile": {
@@ -245,47 +246,47 @@ nested = {
         }
     }
 }
-# 完全支持
+# Fully supported
 ```
 
-## 🏗️ 架构设计
+## 🏗️ Architecture
 
-本项目采用**策略模式**设计：
+This project uses the **Strategy Pattern**:
 
 ```
-ContentExtractor (抽象基类)
+ContentExtractor (Abstract Base Class)
     ├── JSONExtractor
     ├── XMLExtractor
     ├── HTMLExtractor
     └── CodeBlockExtractor
 ```
 
-这种设计使得：
-- ✅ 易于添加新的提取器类型
-- ✅ 每个提取器职责单一，易于测试
-- ✅ 可以灵活替换或扩展提取逻辑
+This design provides:
+- ✅ Easy to add new extractor types
+- ✅ Single responsibility for each extractor
+- ✅ Flexible replacement and extension of extraction logic
 
-## 📚 API 参考
+## 📚 API Reference
 
 ### `extract(raw_text, content_type, language="", extractor=None)`
 
-主要的提取函数。
+Main extraction function.
 
-**参数：**
-- `raw_text` (str): LLM 返回的原始字符串
-- `content_type` (ContentType | str): 内容类型（JSON, XML, HTML, CODE）
-- `language` (str, optional): 对于 CODE 类型，指定编程语言
-- `extractor` (ContentExtractor, optional): 自定义提取器实例
+**Parameters:**
+- `raw_text` (str): Raw string output from LLM
+- `content_type` (ContentType | str): Content type (JSON, XML, HTML, CODE)
+- `language` (str, optional): For CODE type, specify the programming language
+- `extractor` (ContentExtractor, optional): Custom extractor instance
 
-**返回：**
-- JSON: `dict` 或 `list`
+**Returns:**
+- JSON: `dict` or `list`
 - XML/HTML/CODE: `str`
 
-**异常：**
-- `ValueError`: 无法提取有效内容
-- `TypeError`: 提供了无效的提取器
+**Raises:**
+- `ValueError`: If valid content cannot be extracted
+- `TypeError`: If an invalid extractor is provided
 
-### `ContentType` 枚举
+### `ContentType` Enum
 
 ```python
 class ContentType(Enum):
@@ -295,104 +296,186 @@ class ContentType(Enum):
     CODE = "code"
 ```
 
-## 🔧 开发
+### Extractor Options
 
-### 环境设置
+#### JSONExtractor
+
+```python
+JSONExtractor(strict=False)
+```
+- `strict`: If True, disable auto-fixing of errors like trailing commas
+
+#### XMLExtractor
+
+```python
+XMLExtractor(validate=True, recover=True)
+```
+- `validate`: If True and lxml is available, validate XML syntax
+- `recover`: If True, attempt to recover from malformed XML
+
+#### HTMLExtractor
+
+```python
+HTMLExtractor(validate=False, clean=False)
+```
+- `validate`: If True, validate HTML structure
+- `clean`: If True, clean and normalize HTML
+
+#### CodeBlockExtractor
+
+```python
+CodeBlockExtractor(language="", strict=False)
+```
+- `language`: Specific language to extract (e.g., 'python', 'javascript')
+- `strict`: If True, only extract fenced code blocks
+
+## 🔧 Development
+
+### Setup
 
 ```bash
-# 克隆仓库
+# Clone the repository
 git clone https://github.com/aihes/llm-content-extractor.git
 cd llm-content-extractor
 
-# 安装依赖
+# Install dependencies
 poetry install
 
-# 运行测试
+# Run tests
 poetry run pytest
 
-# 代码格式化
+# Format code
 poetry run black .
 
-# 类型检查
+# Type checking
 poetry run mypy llm_content_extractor
 ```
 
-### 运行测试
+### Running Tests
 
 ```bash
-# 运行所有测试
+# Run all tests
 poetry run pytest
 
-# 带覆盖率报告
+# With coverage report
 poetry run pytest --cov=llm_content_extractor --cov-report=html
 
-# 运行特定测试
+# Run specific tests
 poetry run pytest tests/test_json_extractor.py
 ```
 
-## 📖 发布到 PyPI
+## 📖 Publishing to PyPI
 
-详细的发布流程请参阅 [docs/PUBLISHING.md](docs/PUBLISHING.md)。
+See [docs/PUBLISHING.md](docs/PUBLISHING.md) for detailed publishing instructions.
 
-简要步骤：
+Quick steps:
 
 ```bash
-# 1. 更新版本
+# 1. Update version
 poetry version patch
 
-# 2. 构建
+# 2. Build
 poetry build
 
-# 3. 发布
+# 3. Publish
 poetry publish
 ```
 
-## 🤝 贡献
+## 🤝 Contributing
 
-欢迎贡献！请遵循以下步骤：
+Contributions are welcome! Please follow these steps:
 
-1. Fork 本仓库
-2. 创建特性分支 (`git checkout -b feature/amazing-feature`)
-3. 提交更改 (`git commit -m 'Add amazing feature'`)
-4. 推送到分支 (`git push origin feature/amazing-feature`)
-5. 开启 Pull Request
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
 
-## 📄 许可证
+## 📄 License
 
-本项目采用 MIT 许可证 - 详见 [LICENSE](LICENSE) 文件。
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## 💡 使用场景
+## 💡 Use Cases
 
-LLM Content Extractor 特别适用于：
+LLM Content Extractor is particularly useful for:
 
-- 🤖 LLM 应用开发：从模型输出中提取结构化数据
-- 🔄 数据管道：清洗和标准化 AI 生成的内容
-- 🧪 测试工具：验证 LLM 输出格式
-- 📊 数据处理：批量处理 LLM 响应
+- 🤖 **LLM Application Development**: Extract structured data from model outputs
+- 🔄 **Data Pipelines**: Clean and standardize AI-generated content
+- 🧪 **Testing Tools**: Validate LLM output formats
+- 📊 **Data Processing**: Batch process LLM responses
 
-## ❓ 常见问题
+## ❓ FAQ
 
-**Q: 为什么我的 JSON 提取失败？**
+**Q: Why is my JSON extraction failing?**
 
-A: 确保文本中包含有效的 JSON 结构。本库会尝试多种策略，但如果 JSON 完全损坏则无法恢复。
+A: Ensure the text contains valid JSON structure. This library tries multiple strategies, but cannot recover completely corrupted JSON.
 
-**Q: 可以提取多个代码块吗？**
+**Q: Can I extract multiple code blocks?**
 
-A: 当前版本提取第一个匹配的代码块。如需提取多个，请多次调用或实现自定义提取器。
+A: The current version extracts the first matching code block. To extract multiple blocks, use the `extract_all_blocks()` method on `CodeBlockExtractor` or call the function multiple times.
 
-**Q: 支持其他格式吗？**
+**Q: Is there support for other formats?**
 
-A: 可以通过继承 `ContentExtractor` 并注册到系统中来添加新格式支持。
+A: Yes! You can add support for new formats by inheriting from `ContentExtractor` and registering it in the system.
 
-## 🙏 致谢
+**Q: How do I enable strict mode?**
 
-感谢所有贡献者和使用本项目的开发者！
+A: Use the extractor classes directly:
+```python
+extractor = JSONExtractor(strict=True)
+result = extractor.extract(text)
+```
 
-## 📬 联系方式
+## 🌟 Advanced Features
 
-- 问题反馈：[GitHub Issues](https://github.com/aihes/llm-content-extractor/issues)
-- 功能请求：[GitHub Discussions](https://github.com/aihes/llm-content-extractor/discussions)
+### Language Detection
+
+```python
+from llm_content_extractor.strategies import CodeBlockExtractor
+
+extractor = CodeBlockExtractor()
+code = "def hello(): return 'world'"
+language = extractor.detect_language(code)  # Returns 'python'
+```
+
+### Extract All Code Blocks
+
+```python
+from llm_content_extractor.strategies import CodeBlockExtractor
+
+extractor = CodeBlockExtractor()
+blocks = extractor.extract_all_blocks(multi_code_text)
+for block in blocks:
+    print(f"{block['language']}: {block['code']}")
+```
+
+### Validate XML/HTML
+
+```python
+from llm_content_extractor.strategies import XMLExtractor, HTMLExtractor
+
+xml_extractor = XMLExtractor()
+is_valid = xml_extractor.is_valid_xml(xml_string)
+
+html_extractor = HTMLExtractor()
+is_valid = html_extractor.is_valid_html(html_string)
+```
+
+## 📚 Documentation
+
+- [Architecture](docs/ARCHITECTURE.md) - Detailed architecture documentation
+- [Publishing Guide](docs/PUBLISHING.md) - How to publish to PyPI
+- [Examples](examples/) - Usage examples
+
+## 🙏 Acknowledgments
+
+Thanks to all contributors and developers using this project!
+
+## 📬 Contact
+
+- Report Issues: [GitHub Issues](https://github.com/aihes/llm-content-extractor/issues)
+- Feature Requests: [GitHub Discussions](https://github.com/aihes/llm-content-extractor/discussions)
 
 ---
 
-如果这个项目对你有帮助，请给个 ⭐️ 支持一下！
+If this project helps you, please consider giving it a ⭐️!
