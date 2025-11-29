@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.1] - 2025-11-29
+
+### Fixed
+- Translated `CHANGELOG.md` and `docs/ARCHITECTURE.md` to English to align with the project's primary language.
+
+## [1.0.0] - 2025-11-29
+
+### Added
+- Established version 1.0.0, providing stable and reliable core functionality for text extraction.
+
 ## [0.1.0] - 2025-01-29
 
 ### Added
@@ -34,5 +44,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Comprehensive README with examples
   - Publishing guide for PyPI (docs/PUBLISHING.md)
 
-[Unreleased]: https://github.com/aihes/llm-content-extractor/compare/v0.1.0...HEAD
+[Unreleased]: https://github.com/aihes/llm-content-extractor/compare/v1.0.1...HEAD
+[1.0.1]: https://github.com/aihes/llm-content-extractor/compare/v1.0.0...v1.0.1
+[1.0.0]: https://github.com/aihes/llm-content-extractor/compare/v0.1.0...v1.0.0
 [0.1.0]: https://github.com/aihes/llm-content-extractor/releases/tag/v0.1.0
