@@ -99,7 +99,7 @@ class TestJSONExtractor:
 
     def test_empty_string_raises_error(self) -> None:
         """Test that empty string raises ValueError."""
-        with pytest.raises(ValueError, match="Could not extract valid JSON"):
+        with pytest.raises(ValueError, match="Cannot extract JSON from empty"):
             extract("", ContentType.JSON)
 
     def test_extract_json_array_with_trailing_comma(self) -> None:
