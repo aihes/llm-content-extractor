@@ -82,72 +82,90 @@ extract(text1, "json")  # Also works
 
 ### XML Extraction Examples
 
-```python
-from llm_content_extractor import extract, ContentType
-
-xml_text = '''
+Given text containing a fenced XML block:
+```text
+A response from the LLM:
 ```xml
 <root>
     <item id="1">First</item>
     <item id="2">Second</item>
 </root>
 ```
-'''
+```
 
+You can extract it with:
+```python
+from llm_content_extractor import extract, ContentType
+
+# Assuming the text above is in a variable `xml_text`
 result = extract(xml_text, ContentType.XML)
 print(result)  # Returns cleaned XML string
 ```
 
 ### HTML Extraction Examples
 
-```python
-from llm_content_extractor import extract, ContentType
-
-html_text = '''
+Given text containing a fenced HTML block:
+```text
+LLM says:
 ```html
 <div class="container">
     <h1>Title</h1>
     <p>Content here</p>
 </div>
 ```
-'''
+```
 
+You can extract it with:
+```python
+from llm_content_extractor import extract, ContentType
+
+# Assuming the text above is in a variable `html_text`
 result = extract(html_text, ContentType.HTML)
 print(result)  # Returns cleaned HTML string
 ```
 
 ### Code Block Extraction Examples
 
-```python
-from llm_content_extractor import extract, ContentType
+**1. Extract language-specific code**
 
-# Extract language-specific code
-python_code = '''
+Given a Python code block:
+```text
 ```python
 def greet(name):
     return f"Hello, {name}!"
 
 print(greet("World"))
 ```
-'''
+```
 
-code = extract(python_code, ContentType.CODE, language='python')
+Extract it by specifying the language:
+```python
+from llm_content_extractor import extract, ContentType
+
+# Assuming the text above is in a variable `python_code_text`
+code = extract(python_code_text, ContentType.CODE, language='python')
 print(code)
 # Output:
 # def greet(name):
 #     return f"Hello, {name}!"
 #
 # print(greet("World"))
+```
 
-# Extract any code block
-generic_code = '''
+**2. Extract any code block**
+
+Given a generic code block (no language specified):
+```text
 ```
 const x = 42;
 console.log(x);
 ```
-'''
+```
 
-code = extract(generic_code, ContentType.CODE)
+Extract it without specifying a language:
+```python
+# Assuming the text above is in a variable `generic_code_text`
+code = extract(generic_code_text, ContentType.CODE)
 print(code)  # const x = 42;\nconsole.log(x);
 ```
 

@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "llm-content-extractor"
-version = "1.0.1"
+version = "1.0.2"
 description = "A robust content extractor for LLM outputs with support for JSON, XML, HTML, and code blocks"
 authors = ["Your Name <your.email@example.com>"]
 readme = "README.md"
